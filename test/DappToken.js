@@ -26,7 +26,7 @@ contract('DappToken', function(accounts) {
       assert.equal(totalSupply.toNumber(), 1000000, 'sets the total supply to 1,000,000');
       return tokenInstance.balanceOf(accounts[0]);
     }).then(function(adminBalance) {
-      assert.equal(adminBalance.toNumber(), 1000000, 'it allocates the initial supply to the admin account');
+      assert.equal(adminBalance.toNumber(), 300000, 'it allocates the initial supply to the admin account');
     });
   });
 
@@ -53,7 +53,7 @@ contract('DappToken', function(accounts) {
       assert.equal(balance.toNumber(), 250000, 'adds the amount to the receiving account');
       return tokenInstance.balanceOf(accounts[0]);
     }).then(function(balance) {
-      assert.equal(balance.toNumber(), 750000, 'deducts the amount from the sending account');
+      assert.equal(balance.toNumber(), 50000, 'deducts the amount from the sending account');
     });
   });
 

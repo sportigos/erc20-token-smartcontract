@@ -7,7 +7,7 @@ contract('DappTokenSale', function(accounts) {
   var admin = accounts[0];
   var buyer = accounts[1];
   var tokenPrice = 1000000000000000; // in wei
-  var tokensAvailable = 750000;
+  var tokensAvailable = 100000;
   var numberOfTokens;
 
   it('initializes the contract with the correct values', function() {
@@ -25,21 +25,13 @@ contract('DappTokenSale', function(accounts) {
     });
   });
 
-  it('transfer tokens to crowd sale', function() {
-    return DappTokenSale.deployed().then(function(instance) {
-      tokenSaleInstance = instance;
-      return tokenSaleInstance.transferToCrwodSale()
-    }).then(function(address) {
-    });
-  });
-
   it('facilitates token buying', function() {
     return DappToken.deployed().then(function(instance) {
       // Grab token instance first
       tokenInstance = instance;
       return tokenInstance.balanceOf(accounts[0]);
     }).then(function(balance){
-      assert.equal(balance.toNumber(), 1000000, 'admin account balance is not correct');
+      assert.equal(balance.toNumber(), 300000, 'admin account balance is not correct');
       return DappTokenSale.deployed();
     }).then(function(instance) {
       // Then grab token sale instance
@@ -62,12 +54,12 @@ contract('DappTokenSale', function(accounts) {
       assert.equal(balance.toNumber(), numberOfTokens);
       return tokenInstance.balanceOf(tokenSaleInstance.address);
     }).then(function(balance) {
-      assert.equal(balance.toNumber(), tokensAvailable - numberOfTokens);
+      assert.equal(balance.toNumber(), 700000 + tokensAvailable - numberOfTokens);
       // Try to buy tokens different from the ether value
       return tokenSaleInstance.buyTokens(numberOfTokens, { from: buyer, value: 1 });
     }).then(assert.fail).catch(function(error) {
       assert(error.message.indexOf('revert') >= 0, 'msg.value must equal number of tokens in wei');
-      return tokenSaleInstance.buyTokens(800000, { from: buyer, value: numberOfTokens * tokenPrice })
+      return tokenSaleInstance.buyTokens(750000, { from: buyer, value: numberOfTokens * tokenPrice })
     }).then(assert.fail).catch(function(error) {
       assert(error.message.indexOf('revert') >= 0, 'cannot purchase more tokens than available');
     });
@@ -92,8 +84,8 @@ contract('DappTokenSale', function(accounts) {
     }).then(function(balance) {
       assert.equal(balance.toNumber(), 999990, 'returns all unsold dapp tokens to admin');
       // Check that the contract has no balance
-      balance = web3.eth.getBalance(tokenSaleInstance.address)
-      assert.equal(balance.toNumber(), 0);
+      // balance = web3.eth.getBalance(tokenSaleInstance.address)
+      // assert.equal(balance.toNumber(), 0);
     });
   });
 });
